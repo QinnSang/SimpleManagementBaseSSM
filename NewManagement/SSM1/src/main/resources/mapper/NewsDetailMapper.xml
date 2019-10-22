@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper.NewsDetailMapper">
+    <delete id="deleteById" parameterType="int">
+        delete from news_detail
+        <where>
+            <if test="newsid!=null">
+                id=#{newsid}
+            </if>
+        </where>
+    </delete>
+
+    <select id="getAllNews" resultType="pojo.NewsDetail">
+        select id,title,summary,author,createdate as createDate from news_detail order by createDate desc
+    </select>
+
+    <select id="queryNewsByName" resultType="pojo.NewsDetail" parameterType="String">
+        <bind name="_title" value="'%'+title+'%'"/>
+        select id,title,summary,author,createdate as createDate from news_detail
+        <where>
+            <if test="title!=null and title!=''">
+                and title like #{_title}
+            </if>
+        </where>
+    </select>
+</mapper>
