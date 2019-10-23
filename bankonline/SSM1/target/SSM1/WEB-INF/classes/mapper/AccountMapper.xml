@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper.AccountMapper">
+
+
+    <select id="queryByCardNo" resultType="java.lang.Integer">
+        select count(*) from account
+        <where>
+            <if test="cardNo!=null and cardNo!=''">
+                cardNo=#{cardNo}
+            </if>
+        </where>
+    </select>
+    <select id="queryByCardAndPwd" resultType="pojo.Account">
+        select * from account
+        <where>
+            <if test="cardNo!=null and cardNo!=''">
+                and cardNo=#{cardNo}
+            </if>
+            <if test="password!=null and password!=''">
+                and password=#{password}
+            </if>
+        </where>
+    </select>
+    <select id="queryBalance" resultType="java.lang.Double">
+        select balance from account
+        <where>
+            <if test="id!=null">
+                id=#{id}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryStatus" resultType="int">
+        select status from account
+        <where>
+            <if test="cardNo!=null and cardNo!=''">
+                cardNo=#{cardNo}
+            </if>
+        </where>
+    </select>
+
+    <update id="updatePlusMoney">
+        update account set balance=balance+#{transferAmount}
+        <where>
+            <if test="cardNo!=null and cardNo!=''">
+                cardNo=#{cardNo}
+            </if>
+        </where>
+    </update>
+    <update id="updateMinusMoney">
+        update account set balance=balance-#{transferAmount}
+        <where>
+            <if test="sourceAccount.cardNo!=null and sourceAccount.cardNo!=''">
+                cardNo=#{sourceAccount.cardNo}
+            </if>
+        </where>
+    </update>
+
+</mapper>

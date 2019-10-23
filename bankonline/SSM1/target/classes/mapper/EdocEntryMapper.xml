@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper.EdocEntryMapper">
+    <resultMap id="entryWithCategory" type="pojo.EdocEntry">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="summary" column="summary"/>
+        <result property="createdate" column="createdate"/>
+        <result property="uploadUser" column="upload_user"/>
+        <association property="edocCategory" javaType="pojo.EdocCategory">
+            <id property="id" column="category_id"/>
+            <result property="name" column="name"/>
+        </association>
+    </resultMap>
+    <select id="queryByEntryId" resultMap="entryWithCategory">
+        select a.*,b.* from edoc_entry a,edoc_category b
+        <where>
+            a.category_id=b.id
+            <if test="entryId!=null">
+                and a.id=#{entryId}
+            </if>
+        </where>
+    </select>
+    <update id="updateEntry" parameterType="pojo.EdocEntry">
+        update  edoc_entry
+        <set>
+            <if test="title!=null and title!=''">
+                title=#{title},
+            </if>
+            <if test="summary!=null and summary!=''">
+                summary=#{summary},
+            </if>
+            <if test="uploadUser!=null and uploadUser!=''">
+                upload_User=#{uploadUser},
+            </if>
+            <if test="createdate!=null">
+                createdate=#{createdate},
+            </if>
+        </set>
+        <where>
+            <if test="id!=null">
+                and id=#{id}
+            </if>
+        </where>
+
+    </update>
+    <delete id="deleteEntry">
+        delete from edoc_entry
+        <where>
+            <if test="entryId!=null">
+                id=#{entryId}
+            </if>
+        </where>
+    </delete>
+
+    <select id="getAll" resultType="pojo.EdocEntry">
+        select * from edoc_entry a order by a.id desc
+    </select>
+    <select id="queryByCateId" resultType="pojo.EdocEntry">
+        select * from edoc_entry a
+        <where>
+            <if test="id!=null and id!=0">
+                category_id=#{id}
+            </if>
+        </where>
+        order by a.id desc
+    </select>
+
+    <insert id="addEntry" parameterType="pojo.EdocEntry">
+        insert into edoc_entry
+        <trim prefix="(" suffix=")" prefixOverrides=",">
+            <if test="edocCategory.id!=null">
+                ,category_id
+            </if>
+            <if test="title!=null and title!=''">
+                ,title
+            </if>
+            <if test="summary!=null and summary!=''">
+                ,summary
+            </if>
+            <if test="uploadUser!=null and uploadUser!=''">
+                ,upload_User
+            </if>
+            <if test="createdate!=null">
+                ,createdate
+            </if>
+        </trim>
+        <trim prefix="values(" suffix=")" prefixOverrides=",">
+            <if test="edocCategory.id!=null">
+                ,${edocCategory.id}
+            </if>
+            <if test="title!=null and title!=''">
+                ,#{title}
+            </if>
+            <if test="summary!=null and summary!=''">
+                ,#{summary}
+            </if>
+            <if test="uploadUser!=null and uploadUser!=''">
+                ,#{uploadUser}
+            </if>
+            <if test="createdate!=null">
+                ,#{createdate}
+            </if>
+        </trim>
+    </insert>
+</mapper>
