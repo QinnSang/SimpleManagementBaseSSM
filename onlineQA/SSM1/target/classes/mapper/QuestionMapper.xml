@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper.QuestionMapper">
+
+    <select id="queryAllQuestions" resultType="pojo.Question">
+        select * from questions order by lastModified desc;
+    </select>
+
+    <insert id="addQuestion" parameterType="pojo.Question">
+        insert into questions
+        <trim prefix="(" suffix=")" prefixOverrides=",">
+            <if test="title!=null and title!=''">
+                ,title
+            </if>
+            <if test="detailDesc!=null and detailDesc!=''">
+                ,detailDesc
+            </if>
+            <if test="answerCount!=null">
+                ,answerCount
+            </if>
+            <if test="lastModified!=null">
+                ,lastModified
+            </if>
+        </trim>
+        <trim prefix="values(" suffix=")" prefixOverrides=",">
+            <if test="title!=null and title!=''">
+                ,#{title}
+            </if>
+            <if test="detailDesc!=null and detailDesc!=''">
+                ,#{detailDesc}
+            </if>
+            <if test="answerCount!=null">
+                ,#{answerCount}
+            </if>
+            <if test="lastModified!=null">
+                ,#{lastModified}
+            </if>
+        </trim>
+    </insert>
+
+    <resultMap id="quesWithAns" type="pojo.Question">
+        <id property="id" column="qid"/>
+        <result property="title" column="title"/>
+        <result property="detailDesc" column="detailDesc"/>
+        <collection property="answers" ofType="pojo.Answer">
+            <result property="ansContent" column="ansContent"/>
+            <result property="ansDate" column="ansDate"/>
+        </collection>
+    </resultMap>
+    <select id="queryQA" resultMap="quesWithAns">
+        select q.id as qid,title,detailDesc,ansContent,ansDate from questions q LEFT JOIN answers a on q.id=a.qid
+        <where>
+            <if test="id!=null">
+                and q.id=#{id}
+            </if>
+        </where>
+        order by a.ansDate desc
+    </select>
+
+    <update id="updateAnsCount" parameterType="long">
+        update questions
+        <set>
+            answerCount=answerCount+1
+        </set>
+        <where>
+            <if test="qid!=null">
+                id=#{qid}
+            </if>
+        </where>
+    </update>
+</mapper>

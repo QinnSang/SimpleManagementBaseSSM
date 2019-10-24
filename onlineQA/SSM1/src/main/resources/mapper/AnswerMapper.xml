@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper.AnswerMapper">
+    <insert id="addAnswer" parameterType="pojo.Answer">
+        insert into answers
+        <trim prefix="(" suffix=")" prefixOverrides=",">
+            <if test="ansContent!=null and ansContent!=''">
+                ,ansContent
+            </if>
+            <if test="ansDate!=null">
+                ,ansDate
+            </if>
+            <if test="qid!=null">
+                ,qid
+            </if>
+        </trim>
+        <trim prefix="values(" suffix=")" prefixOverrides=",">
+            <if test="ansContent!=null and ansContent!=''">
+                ,#{ansContent}
+            </if>
+            <if test="ansDate!=null">
+                ,#{ansDate}
+            </if>
+            <if test="qid!=null">
+                ,#{qid}
+            </if>
+        </trim>
+    </insert>
+</mapper>
